@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор облака имен</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #0d0d0d;
+            color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            justify-content: center;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            font-weight: 300;
+            margin: 0 0 30px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            background-color: #1a1a1a;
+            color: #f2f2f2;
+            border: none;
+            padding: 15px;
+            font-size: 1.1em;
+            text-align: center;
+            outline: none;
+            border-radius: 8px;
+        }
+
+        input[type="number"]::placeholder {
+            color: #737373;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            font-size: 1.1em;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        img {
+            margin-top: 30px;
+            max-width: 90%;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        label {
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<h1>Генератор облака имен</h1>
+<form id="word-cloud-form">
+    <label for="year">Год:</label>
+    <input type="number" id="year" name="year" placeholder="Впишите год">
+    <button type="submit">Сгенерировать</button>
+</form>
+<img id="word-cloud-result" src="" alt="Word Cloud" style="display:none;">
+<script>
+    document.getElementById('word-cloud-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const year = document.getElementById('year').value;
+
+        fetch(`/chart?&year=${year}`)
+            .then(response => response.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                const img = document.getElementById('word-cloud-result');
+                img.src = url;
+                img.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error generating word cloud:', error);
+            });
+    });
+</script>
+</body>
+</html>
