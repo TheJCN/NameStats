@@ -9,7 +9,6 @@ public class Program
     public static void Main(string[] args)
     {
         NamesData = ReadData();
-
         CreateHostBuilder(args).Build().Run();
     }
 
@@ -24,13 +23,11 @@ public class Program
     private static NameData[] ReadData()
     {
         var assembly = Assembly.GetExecutingAssembly();
-        const string resourceName = "NameStats.names.txt"; // Замени NameStats на правильное пространство имен, если оно другое.
+        const string resourceName = "NameStats.names.txt"; 
 
         using var stream = assembly.GetManifestResourceStream(resourceName);
         if (stream == null)
-        {
             throw new FileNotFoundException($"Embedded resource '{resourceName}' not found.");
-        }
 
         using var reader = new StreamReader(stream);
         var lines = reader.ReadToEnd()
@@ -38,9 +35,7 @@ public class Program
 
         var names = new NameData[lines.Length];
         for (var i = 0; i < lines.Length; i++)
-        {
             names[i] = NameData.ParseFrom(lines[i]);
-        }
 
         return names;
     }

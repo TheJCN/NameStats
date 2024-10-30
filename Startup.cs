@@ -5,6 +5,7 @@ using KnowledgePicker.WordCloud.Layouts;
 using KnowledgePicker.WordCloud.Primitives;
 using KnowledgePicker.WordCloud.Sizers;
 using SkiaSharp;
+using System.Reflection;
 
 namespace NameStats;
 
@@ -18,11 +19,7 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         if (env.IsDevelopment())
-        {
             app.UseDeveloperExceptionPage();
-        }
-        
-        app.UseStaticFiles();
 
         app.UseRouting();
 
@@ -30,7 +27,9 @@ public class Startup
         {
             endpoints.MapGet("/", async context =>
             {
-                context.Response.Redirect("/index.html");
+                var htmlContent = GetEmbeddedHtml("NameStats.wwwroot.index.html");
+                context.Response.ContentType = "text/html";
+                await context.Response.WriteAsync(htmlContent);
             });
 
             endpoints.MapGet("/chart", async context =>
@@ -92,5 +91,18 @@ public class Startup
         data.SaveTo(memoryStream);
 
         return memoryStream.ToArray();
+    }
+    
+    private static string GetEmbeddedHtml(string resourceName)
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        using (var stream = assembly.GetManifestResourceStream(resourceName))
+        {
+            if (stream == null)
+                throw new FileNotFoundException($"Resource '{resourceName}' not found.");
+        
+            using (var reader = new StreamReader(stream))
+                return reader.ReadToEnd();
+        }
     }
 }
